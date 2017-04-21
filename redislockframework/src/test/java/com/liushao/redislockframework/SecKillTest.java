@@ -28,10 +28,10 @@ public class SecKillTest {
 	@Test
 	public void testSecKill(){
 		int threadCount = 1000;
-		int splitPoint = 500;
-		CountDownLatch endCount = new CountDownLatch(threadCount);
-		CountDownLatch beginCount = new CountDownLatch(1);
-		SecKillImpl testClass = new SecKillImpl();
+		int splitPoint = 600;
+		final CountDownLatch endCount = new CountDownLatch(threadCount);
+		final CountDownLatch beginCount = new CountDownLatch(1);
+		final SecKillImpl testClass = new SecKillImpl();
 		
 		Thread[] threads = new Thread[threadCount];
 		//起500个线程，秒杀第一个商品
@@ -44,7 +44,11 @@ public class SecKillTest {
 						//用动态代理的方式调用secKill方法
 						SeckillInterface proxy = (SeckillInterface) Proxy.newProxyInstance(SeckillInterface.class.getClassLoader(), 
 							new Class[]{SeckillInterface.class}, new CacheLockInterceptor(testClass));
-						proxy.secKill("test", commidityId1);
+//						proxy.secKill("test", commidityId1);
+						Goods goods = new Goods();
+						goods.setArg1("test");
+						goods.setArg2(commidityId1);
+						proxy.secKillObj(goods);
 						endCount.countDown();
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
@@ -66,7 +70,11 @@ public class SecKillTest {
 						beginCount.await();
 						SeckillInterface proxy = (SeckillInterface) Proxy.newProxyInstance(SeckillInterface.class.getClassLoader(), 
 							new Class[]{SeckillInterface.class}, new CacheLockInterceptor(testClass));
-						proxy.secKill("test", commidityId2);
+//						proxy.secKill("test", commidityId2);
+						Goods goods = new Goods();
+						goods.setArg1("test");
+						goods.setArg2(commidityId2);
+						proxy.secKillObj(goods);
 						//testClass.testFunc("test", 10000001L);
 						endCount.countDown();
 					} catch (InterruptedException e) {

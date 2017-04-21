@@ -68,8 +68,10 @@ public class CacheLockInterceptor implements InvocationHandler{
 				if(annotations[i][j] instanceof LockedComplexObject){//注解为LockedComplexObject
 					index = i;
 					try {
-						return args[i].getClass().getField(((LockedComplexObject)annotations[i][j]).field());
-					} catch (NoSuchFieldException | SecurityException e) {
+						return args[i].getClass().getDeclaredField(((LockedComplexObject)annotations[i][j]).field());
+					} catch (NoSuchFieldException e) {
+						throw new CacheLockException("注解对象中没有该属性" + ((LockedComplexObject)annotations[i][j]).field());
+					}catch (SecurityException e){
 						throw new CacheLockException("注解对象中没有该属性" + ((LockedComplexObject)annotations[i][j]).field());
 					}
 				}
